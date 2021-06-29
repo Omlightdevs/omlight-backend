@@ -1,0 +1,5 @@
+{
+  "JWT_SECRET": "JSONWEBTOKENSECRET",
+  "DB_PATH": "mongodb+srv://admin:xU5nDEMeDjqjGy1G@realmcluster.1swnn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  "JWT_EXPIRE": 36000
+}
