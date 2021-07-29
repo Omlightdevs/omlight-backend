@@ -21,19 +21,16 @@ export class CategoryController implements IController {
                path: "/create-category",
                handler: this.createNewCategory,
                method: "POST",
-               middleware: [auth],
           });
           this.routes.push({
                path: "/update-category/:id",
                handler: this.updatingCategory,
                method: "PUT",
-               middleware: [auth],
           });
           this.routes.push({
                path: "/delete-category/:id",
                handler: this.deleteCategory,
                method: "DELETE",
-               middleware: [auth],
           });
      }
      public async getAllCategories(req: Request, res: Response) {
