@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { auth } from "middleware";
 import { Category } from "model";
 import { IController, IControllerRoutes } from "types";
 import { Ok } from "utils";

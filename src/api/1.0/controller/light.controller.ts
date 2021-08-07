@@ -21,19 +21,16 @@ export class LightController implements IController {
                path: "/create-lights",
                handler: this.createNewLight,
                method: "POST",
-               middleware: [auth],
           });
           this.routes.push({
                path: "/update-light/:id",
                handler: this.updatingLights,
-               middleware: [auth],
                method: "PUT",
           });
           this.routes.push({
                path: "/delete-light/:id",
                handler: this.deleteLight,
                method: "DELETE",
-               middleware: [auth],
           });
           this.routes.push({
                path: "/lights/:categoryId",
@@ -74,9 +71,9 @@ export class LightController implements IController {
      }
      public async createNewLight(req: Request, res: Response) {
           try {
-               const { image, title, description, price, category } = req.body;
+               const { images, title, description, price, category } = req.body;
                new Lights({
-                    images: image,
+                    images: images,
                     title: title,
                     description: description,
                     price: price,

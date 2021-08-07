@@ -81,14 +81,12 @@ export class AuthController implements IController {
 
                const userExist = await Users.findOne({ email });
                if (!userExist) {
-                    console.log("No user found");
                     return UnAuthorized(
                          res,
                          "No user with this email is registered with us"
                     );
                }
                if (!bcrypt.compareSync(password, userExist.password)) {
-                    console.log("wrong password");
                     return UnAuthorized(
                          res,
                          "You have entered wrong password!"
@@ -111,9 +109,7 @@ export class AuthController implements IController {
      public async resetPassword(req: Request, res: Response) {
           const { email } = req.body;
           const ifUserExist = await Users.findOne({ email });
-          console.log(email);
           if (!ifUserExist) {
-               console.log("No user found");
                return UnAuthorized(
                     res,
                     "No user with this email is registered with us"
@@ -152,7 +148,6 @@ export class AuthController implements IController {
      public async changePassword(req: Request, res: Response) {
           const { password, token } = req.body;
           if (!token) {
-               console.log("token is required");
                return BadRequest(res, "Token is required");
           }
           let decodedToken = null;
@@ -162,11 +157,9 @@ export class AuthController implements IController {
                     "jsonwebtoken"
                ) as ResetTokenInfo;
           } catch (err) {
-               console.log("token is invalid one");
                return BadRequest(res, "Token is invalid");
           }
           if (!decodedToken) {
-               console.log("token is invalid two");
                return BadRequest(res, "Token is invalid");
           }
           const user = await Users.findOne({ resetToken: token });
@@ -196,7 +189,6 @@ export class AuthController implements IController {
           if (user) {
                tokenValid = true;
           }
-          console.log(user, token);
 
           return Ok(res, { success: tokenValid });
      }
