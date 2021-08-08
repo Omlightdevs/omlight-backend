@@ -19,7 +19,7 @@ export class WebsiteController implements IController {
     this.routes.push({
       path: "/get-contact-details",
       handler: this.getAllDetails,
-      method: "POST",
+      method: "GET",
     });
     this.routes.push({
       handler: this.contactAdmin,
