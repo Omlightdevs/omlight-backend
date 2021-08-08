@@ -7,189 +7,179 @@ import * as jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 
 export class AuthController implements IController {
-     public routes: IControllerRoutes[] = [];
+  public routes: IControllerRoutes[] = [];
 
-     constructor() {
-          this.routes.push({
-               path: "/sign-up",
-               handler: this.signup,
-               method: "POST",
-               //  middleware: [authMiddleware],
-          });
+  constructor() {
+    this.routes.push({
+      path: "/sign-up",
+      handler: this.signup,
+      method: "POST",
+    });
 
-          this.routes.push({
-               path: "/sign-in",
-               handler: this.signin,
-               method: "POST",
-          });
+    this.routes.push({
+      path: "/sign-in",
+      handler: this.signin,
+      method: "POST",
+    });
 
-          this.routes.push({
-               path: "/reset-password",
-               handler: this.resetPassword,
-               method: "POST",
-          });
+    this.routes.push({
+      path: "/reset-password",
+      handler: this.resetPassword,
+      method: "POST",
+    });
 
-          this.routes.push({
-               path: "/change-password",
-               handler: this.changePassword,
-               method: "PUT",
-          });
+    this.routes.push({
+      path: "/change-password",
+      handler: this.changePassword,
+      method: "PUT",
+    });
 
-          this.routes.push({
-               path: "/verify-reset-token",
-               handler: this.resetTokenVerify,
-               method: "GET",
-          });
-     }
+    this.routes.push({
+      path: "/verify-reset-token",
+      handler: this.resetTokenVerify,
+      method: "GET",
+    });
+  }
 
-     public async signup(req: Request, res: Response) {
-          try {
-               const { email, password } = req.body;
-               const userExist = await Users.findOne({ email });
-               if (userExist) {
-                    return UnAuthorized(
-                         res,
-                         "The email you are using is already registered with us."
-                    );
-               }
+  public async signup(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      const userExist = await Users.findOne({ email });
+      if (userExist) {
+        return UnAuthorized(
+          res,
+          "The email you are using is already registered with us."
+        );
+      }
 
-               const hashPassword = bcrypt.hashSync(password, 10);
-               const token = jwt.sign(
-                    {
-                         email: email,
-                    },
-                    "jsonwebtoken",
-                    { expiresIn: "300s" }
-               );
+      const hashPassword = bcrypt.hashSync(password, 10);
+      const token = jwt.sign(
+        {
+          email: email,
+        },
+        "jsonwebtoken",
+        { expiresIn: "300s" }
+      );
 
-               await new Users({
-                    email: email,
-                    password: hashPassword,
-                    admin: true,
-               }).save();
+      await new Users({
+        email: email,
+        password: hashPassword,
+        admin: true,
+      }).save();
 
-               return Ok(res, token);
-          } catch (err) {
-               console.log(err);
-               return err;
-          }
-     }
+      return Ok(res, token);
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
 
-     public async signin(req: Request, res: Response) {
-          try {
-               const { email, password } = req.body;
+  public async signin(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
 
-               const userExist = await Users.findOne({ email });
-               if (!userExist) {
-                    return UnAuthorized(
-                         res,
-                         "No user with this email is registered with us"
-                    );
-               }
-               if (!bcrypt.compareSync(password, userExist.password)) {
-                    return UnAuthorized(
-                         res,
-                         "You have entered wrong password!"
-                    );
-               }
-               const token = jwt.sign(
-                    {
-                         email: email,
-                    },
-                    "jsonwebtoken",
-                    { expiresIn: "300s" }
-               );
+      const userExist = await Users.findOne({ email });
+      if (!userExist) {
+        return UnAuthorized(
+          res,
+          "No user with this email is registered with us"
+        );
+      }
+      if (!bcrypt.compareSync(password, userExist.password)) {
+        return UnAuthorized(res, "You have entered wrong password!");
+      }
+      const token = jwt.sign(
+        {
+          email: email,
+        },
+        "jsonwebtoken",
+        { expiresIn: "300s" }
+      );
 
-               return Ok(res, { token: token, email: email });
-          } catch (err) {
-               console.log(err);
-          }
-     }
+      return Ok(res, { token: token, email: email });
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-     public async resetPassword(req: Request, res: Response) {
-          const { email } = req.body;
-          const ifUserExist = await Users.findOne({ email });
-          if (!ifUserExist) {
-               return UnAuthorized(
-                    res,
-                    "No user with this email is registered with us"
-               );
-          }
-          const token = jwt.sign(
-               {
-                    email: email,
-               },
-               "jsonwebtoken",
-               { expiresIn: "900s" }
-          );
-          await Users.updateOne({ email }, { $set: { resetToken: token } });
-          let transporter = await nodemailer.createTransport({
-               host: "smtp.gmail.com",
-               port: 465,
-               auth: {
-                    user: "teamviewer993@gmail.com",
-                    pass: "22558800Aa@",
-               },
-          });
-          let mailOptions = {
-               to: email,
-               subject: "Password reset link for Black pearl authentication",
-               text: `Hey, \n \n this is mail from BLACK PEARL AUTHENTICATION you are requested for the reseting password for your app,
+  public async resetPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    const ifUserExist = await Users.findOne({ email });
+    if (!ifUserExist) {
+      return UnAuthorized(res, "No user with this email is registered with us");
+    }
+    const token = jwt.sign(
+      {
+        email: email,
+      },
+      "jsonwebtoken",
+      { expiresIn: "900s" }
+    );
+    await Users.updateOne({ email }, { $set: { resetToken: token } });
+    let transporter = await nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      auth: {
+        user: "teamviewer993@gmail.com",
+        pass: "22558800Aa@",
+      },
+    });
+    let mailOptions = {
+      to: email,
+      subject: "Password reset link for Black pearl authentication",
+      text: `Hey, \n \n this is mail from BLACK PEARL AUTHENTICATION you are requested for the reseting password for your app,
                \n \n that's recently noticed... \n http://localhost:3000/new-password?token=${token} \n click on this link and reset your password \n THANK YOU`,
-          };
-          transporter.sendMail(mailOptions, (error, info) => {
-               if (error) {
-                    return console.log(error);
-               }
-               return Ok(res, "mail has been send to your email");
-          });
-     }
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      return Ok(res, "mail has been send to your email");
+    });
+  }
 
-     public async changePassword(req: Request, res: Response) {
-          const { password, token } = req.body;
-          if (!token) {
-               return BadRequest(res, "Token is required");
-          }
-          let decodedToken = null;
-          try {
-               decodedToken = jwt.verify(
-                    token,
-                    "jsonwebtoken"
-               ) as ResetTokenInfo;
-          } catch (err) {
-               return BadRequest(res, "Token is invalid");
-          }
-          if (!decodedToken) {
-               return BadRequest(res, "Token is invalid");
-          }
-          const user = await Users.findOne({ resetToken: token });
+  public async changePassword(req: Request, res: Response) {
+    const { password, token } = req.body;
+    if (!token) {
+      return BadRequest(res, "Token is required");
+    }
+    let decodedToken = null;
+    try {
+      decodedToken = jwt.verify(token, "jsonwebtoken") as ResetTokenInfo;
+    } catch (err) {
+      return BadRequest(res, "Token is invalid");
+    }
+    if (!decodedToken) {
+      return BadRequest(res, "Token is invalid");
+    }
+    const user = await Users.findOne({ resetToken: token });
 
-          if (!user) {
-               return BadRequest(res, "Token is invalid");
-          }
-          await Users.updateOne(
-               { resetToken: token },
-               {
-                    $set: {
-                         password: bcrypt.hashSync(password, 10),
-                         resetToken: "",
-                    },
-               }
-          );
-          return Ok(
-               res,
-               "your password have been changed, now login and try your account"
-          );
-     }
+    if (!user) {
+      return BadRequest(res, "Token is invalid");
+    }
+    await Users.updateOne(
+      { resetToken: token },
+      {
+        $set: {
+          password: bcrypt.hashSync(password, 10),
+          resetToken: "",
+        },
+      }
+    );
+    return Ok(
+      res,
+      "your password have been changed, now login and try your account"
+    );
+  }
 
-     public async resetTokenVerify(req: Request, res: Response) {
-          const token = req.query.token as string;
-          const user = await Users.findOne({ resetToken: token });
-          let tokenValid = false;
-          if (user) {
-               tokenValid = true;
-          }
+  public async resetTokenVerify(req: Request, res: Response) {
+    const token = req.query.token as string;
+    const user = await Users.findOne({ resetToken: token });
+    let tokenValid = false;
+    if (user) {
+      tokenValid = true;
+    }
 
-          return Ok(res, { success: tokenValid });
-     }
+    return Ok(res, { success: tokenValid });
+  }
 }
