@@ -5,6 +5,7 @@ import {
      CategoryController,
      HomeController,
      LightController,
+     WebsiteController
 } from "./controller";
 
 const routesHandler = (express: Express, controller: IController) => {
@@ -50,4 +51,6 @@ export const registerRoutesV1 = (express: Express) => {
      routesHandler(express, new CategoryController());
      routesHandler(express, new LightController());
      routesHandler(express, new HomeController());
+     routesHandler(express, new WebsiteController());
+
 };

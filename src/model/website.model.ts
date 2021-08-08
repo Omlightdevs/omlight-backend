@@ -16,6 +16,8 @@ const websiteSchema = new Mongoose.Schema({
     brands: {
         title:{type:Mongoose.Schema.Types.String,required:true}
     }
+}, {
+    timestamps:true
 })
 
 export const WebsiteDetails = Mongoose.model<Websites>('Website',websiteSchema)

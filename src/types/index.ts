@@ -3,3 +3,4 @@ export * from "./user.types";
 export * from "./category.types";
 export * from "./lights.types";
 export * from './website.types'
+export * from './contact-form'
