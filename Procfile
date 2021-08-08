@@ -1,1 +1,1 @@
-web: ./node_modules/.bin/ts-node -- ./src/index.ts
+web:   ./src/index.ts
