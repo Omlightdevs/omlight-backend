@@ -22,6 +22,11 @@ export class WebsiteController implements IController {
       method: "GET",
     });
     this.routes.push({
+      path: "/get-contact-details/:id",
+      handler: this.getAllDetailsById,
+      method: "GET",
+    });
+    this.routes.push({
       handler: this.contactAdmin,
       method: "POST",
       path: "/contact",
@@ -36,25 +41,40 @@ export class WebsiteController implements IController {
       handler: this.deleteCustomerDetails,
       method: "DELETE",
     });
+    this.routes.push({
+      path: "/update-wesbite-details/:id",
+      method: "PUT",
+      handler: this.updatingWebsiteInfo,
+    });
   }
   public async uplodingAllDetails(req: Request, res: Response) {
     const {
-      brands,
-      contact,
+      facebookLink,
+      instagramLink,
+      phoneNumberOne,
+      phoneNumberTwo,
       description,
       logo,
-      shopAddress,
       websiteName,
+      shopAddress,
     }: IWebsiteProps = req.body;
-    new WebsiteDetails({
+
+    await new WebsiteDetails({
       websiteName: websiteName,
       logo: logo,
-      descritption: description,
-      contact: contact,
+      description: description,
+      facebookLink: facebookLink,
+      instagramLink: instagramLink,
+      phoneNumberOne: phoneNumberOne,
+      phoneNumberTwo: phoneNumberTwo,
       shopAddress: shopAddress,
-      brands: brands,
     }).save();
     return Ok(res, { message: "details have been updated" });
+  }
+
+  public async getAllDetails(req: Request, res: Response) {
+    const info = await WebsiteDetails.find({});
+    return Ok(res, info);
   }
 
   public async contactAdmin(req: Request, res: Response) {
@@ -69,8 +89,9 @@ export class WebsiteController implements IController {
       message: `${name} Thank you very much for contact us! We will react you at very soon`,
     });
   }
-  public async getAllDetails(req: Request, res: Response) {
-    const data = await WebsiteDetails.find({}).sort({ _id: -1 });
+
+  public async getAllDetailsById(req: Request, res: Response) {
+    const data = await WebsiteDetails.findById({ _id: req.params.id });
     return Ok(res, data);
   }
   public async getCustomers(req: Request, res: Response) {
@@ -79,10 +100,17 @@ export class WebsiteController implements IController {
     });
     return Ok(res, data);
   }
+
   public async deleteCustomerDetails(req: Request, res: Response) {
     await Contact.deleteOne({ _id: req.params.id });
     return Ok(res, {
       message: `Contact details have been deleted successfully`,
     });
+  }
+
+  public async updatingWebsiteInfo(req: Request, res: Response) {
+    const id = req.params.id;
+    await WebsiteDetails.findByIdAndUpdate({ _id: id }, { $set: req.body });
+    return Ok(res, { message: "Your details have been updated" });
   }
 }
