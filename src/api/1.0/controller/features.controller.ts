@@ -57,6 +57,11 @@ export class WebsiteController implements IController {
       logo,
       websiteName,
       shopAddress,
+      shopImagesOne,
+      shopImagesTwo,
+      shopImagesThree,
+      shopImagesFive,
+      shopImagesFour,
     }: IWebsiteProps = req.body;
 
     await new WebsiteDetails({
@@ -68,6 +73,11 @@ export class WebsiteController implements IController {
       phoneNumberOne: phoneNumberOne,
       phoneNumberTwo: phoneNumberTwo,
       shopAddress: shopAddress,
+      shopImagesOne: shopImagesOne,
+      shopImagesTwo: shopImagesTwo,
+      shopImagesThree: shopImagesThree,
+      shopImagesFive: shopImagesFive,
+      shopImagesFour: shopImagesFour,
     }).save();
     return Ok(res, { message: "details have been updated" });
   }

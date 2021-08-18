@@ -7,4 +7,9 @@ export interface IWebsiteProps {
   instagramLink: string;
   facebookLink: string;
   shopAddress: string;
+  shopImagesOne: string;
+  shopImagesTwo: string;
+  shopImagesThree: string;
+  shopImagesFour: string;
+  shopImagesFive: string;
 }

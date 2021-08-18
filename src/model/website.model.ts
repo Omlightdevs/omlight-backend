@@ -13,6 +13,11 @@ const websiteSchema = new Mongoose.Schema(
     instagramLink: { type: Mongoose.Schema.Types.String, required: true },
     facebookLink: { type: Mongoose.Schema.Types.String, required: true },
     shopAddress: { type: Mongoose.Schema.Types.String, required: true },
+    shopImagesOne: { type: Mongoose.Schema.Types.String, required: true },
+    shopImagesTwo: { type: Mongoose.Schema.Types.String, required: true },
+    shopImagesThree: { type: Mongoose.Schema.Types.String, required: true },
+    shopImagesFour: { type: Mongoose.Schema.Types.String, required: true },
+    shopImagesFive: { type: Mongoose.Schema.Types.String, required: true },
   },
   {
     timestamps: true,
